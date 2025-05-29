@@ -19,9 +19,9 @@ export const ProductCard = ({ name, price, oldPrice, store }: ProductCardProps) 
         name: "Chocapic",
         image: "/chocapic.png",
         prices: [
-        { store: "Unimarc", price: 1000, oldPrice: 1500 },
-        { store: "Jumbo", price: 1500 },
-        { store: "Lider", price: 1490 },
+        { store: "Unimarc", price: 1000, oldPrice: 1500 , lat: -34.9849009597703, lng:-71.234822002877 },
+        { store: "Jumbo", price: 1500 ,lat: -34.992401564416326,  lng:-71.24478083356088 },
+        { store: "Lider", price: 1490,lat: -34.977487716408646, lng: -71.23921257368347 },
         ],
     },
     });

@@ -6,6 +6,8 @@ import { StoreCard } from "@/components/StoreCard";
 
 type PriceInfo = {
   store: string;
+  lat: number;
+  lng: number;
   price: number;
   oldPrice?: number;
 };
@@ -43,17 +45,19 @@ export default function Producto() {
                 <img src={image} alt={name} className="mx-auto max-h-72 object-contain" />
             </Card>
             {/* Lista de tiendas */}
-             <div className="flex flex-col gap-4">
-                {prices.map(({ store, price, oldPrice }) => (
-                <StoreCard
-                    key={store}
-                    store={store}
-                    price={price}
-                    oldPrice={oldPrice}
-                    isBest={store === bestPrice.store}
-                />
-                ))}
-            </div>
+                <div className="flex flex-col gap-4">
+                    {prices.map(({ store, price, oldPrice, lat, lng }) => (
+                        <StoreCard
+                        key={store}
+                        store={store}
+                        price={price}
+                        oldPrice={oldPrice}
+                        isBest={store === bestPrice.store}
+                        lat={lat}
+                        lng={lng}
+                        />
+                    ))}
+                </div>
         </div>
     );
 }

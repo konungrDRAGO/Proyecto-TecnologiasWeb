@@ -48,7 +48,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ lat, lng }) => {
   }, [lat, lng]);
 
   return (
-    <div className="w-full h-[500px] relative">
+    <div className="w-full h-[600px] relative">
       <div
         ref={mapContainer}
         className="absolute top-0 bottom-0 w-full h-full border border-gray-300 rounded-md"

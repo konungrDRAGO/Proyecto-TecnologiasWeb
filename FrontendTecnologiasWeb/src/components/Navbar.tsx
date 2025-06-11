@@ -69,7 +69,7 @@ export function Navbar() {
             ) : (
               <>
                 <DropdownMenuItem onClick={() => navigate('/login')}>Iniciar sesión</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => console.log("Crear cuenta")}>Crear cuenta</DropdownMenuItem>
+                <DropdownMenuItem onClick={() =>  navigate('/register')}>Crear cuenta</DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>

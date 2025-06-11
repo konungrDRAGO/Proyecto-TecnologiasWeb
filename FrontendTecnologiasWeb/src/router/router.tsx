@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { LoginForm } from "@/pages/Login";
 import MainLayout from "./layout";
 import Producto from "@/pages/Producto";
+import { RegisterForm } from "@/pages/Register";
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,14 @@ export const router = createBrowserRouter([
     element: (
       <MainLayout>
         <LoginForm />
+      </MainLayout>
+    ),
+  },
+  {
+    path: "/register",
+    element: (
+      <MainLayout>
+        <RegisterForm/>
       </MainLayout>
     ),
   },

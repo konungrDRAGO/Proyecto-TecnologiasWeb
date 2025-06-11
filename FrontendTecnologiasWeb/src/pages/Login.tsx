@@ -83,7 +83,7 @@ export function LoginForm() {
 
                 <p className="text-sm text-black dark:text-gray-300">
                 ¿No tienes cuenta?{" "}
-                <a href="#" className="font-semibold underline dark:text-white">
+                <a href="/register" className="font-semibold underline dark:text-white">
                     Regístrate aquí
                 </a>
                 </p>

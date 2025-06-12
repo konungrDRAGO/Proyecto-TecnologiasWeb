@@ -118,3 +118,23 @@
     @apply bg-background text-foreground;
   }
 }
+@layer utilities {
+  .scrollbar-thin-dark {
+    scrollbar-width: thin;
+    scrollbar-color: #8a8a8a transparent;
+  }
+
+  .scrollbar-thin-dark::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin-dark::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin-dark::-webkit-scrollbar-thumb {
+    background-color: #8a8a8a;
+    border-radius: 6px;
+  }
+}

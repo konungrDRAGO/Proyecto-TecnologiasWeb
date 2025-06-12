@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
 import { useState } from "react";
 import { useLocation } from "@/hooks/useLocation";
-import { MapPin } from "lucide-react";
+import { MapPin, Tag } from "lucide-react";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 import {
   Pagination,
@@ -24,6 +23,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select"
+import { useNavigate } from "react-router-dom";
 
 const products = [
   {
@@ -134,7 +134,7 @@ const products = [
 
 ];
 
-export default function Landing() {
+export default function Ofertas() {
   const [query, setQuery] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
@@ -145,16 +145,20 @@ export default function Landing() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [selectedMarket, setSelectedMarket] = useState("Todos los Supermercados");
 
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(query.toLowerCase())
-  );
+  const filteredProducts = products.filter((product) => {
+    const matchesQuery = product.name.toLowerCase().includes(query.toLowerCase());
+    const matchesMarket =
+      selectedMarket === "Todos los Supermercados" || product.store === selectedMarket;
+    return matchesQuery && matchesMarket;
+  });
 
-  const handleItemsPerPageChange = (value:Number) => {
-    setItemsPerPage(Number(value));
-    setCurrentPage(1);
-  };
+  const uniqueMarkets = [
+    "Todos los Supermercados",
+    ...Array.from(new Set(products.map((p) => p.store)))
+  ];
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -172,46 +176,63 @@ export default function Landing() {
 
       {/* Navegación principal */}
       <div className="flex justify-center gap-4 mb-6">
-        <Button className="bg-[#292F42] hover:bg-[#1f2533] text-white dark:bg-[#1f2533] dark:hover:bg-[#10141d]" onClick={() => navigate('/')}>Inicio</Button>
-        <Button variant="secondary" onClick={() => navigate('/ofertas')}> Ofertas
+        <Button variant="secondary" onClick={() => navigate('/')}>Inicio</Button>
+        <Button className="bg-[#292F42] hover:bg-[#1f2533] text-white dark:bg-[#1f2533] dark:hover:bg-[#10141d]" onClick={() => navigate('/ofertas')}>
+          Ofertas
         </Button>
         <Button variant="secondary" onClick={() => navigate('/supermercados')}>Supermercados</Button>
       </div>
-
       {/* Hero principal */}
-      <section className="bg-[#292F42] dark:bg-[#1f2533] text-white rounded-xl p-6 text-center mb-10 transition-colors duration-300">
-        <h1 className="text-2xl font-bold mb-4">
-          Encuentra las mejores ofertas de supermercados en Chile
+      <div className="bg-[#292F42] dark:bg-[#1f2533] text-white rounded-xl p-6 text-center mb-10 transition-colors duration-300 w-full">
+        <h1 className="text-2xl font-bold mb-4 w-full justify-center flex flex-row items-center">
+          <Tag className="mr-2" style={{ transform: "scaleX(-1)" }} /> Todas las Ofertas
         </h1>
-        
-        <div className="py-4 rounded-xl flex justify-center">
-          <div className="flex items-center bg-[#f1f1f1] rounded-md overflow-hidden w-full sm:w-1/2 shadow-md h-9">
-            <Input
-              placeholder="Buscar productos"
-              className="bg-transparent border-0 text-black placeholder:text-[#a0a0a0] px-4 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none h-full"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <Button
-              className="h-6 rounded-full bg-[#292F42] text-white px-4 text-xs font-semibold hover:bg-[#1f2533] transition mr-2"
-              onClick={() => console.log("Buscar:", query)}
+        <div className="flex flex-row justify-center">
+          <div className="py-4 rounded-xl w-1/2 flex start">
+            <div className="flex items-center bg-[#f1f1f1] rounded-md overflow-hidden w-full mr-4 shadow-md h-9 ml-4">
+              <Input
+                placeholder="Buscar productos"
+                className="bg-transparent border-0 text-black placeholder:text-[#a0a0a0] px-4 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none h-full w-full"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Select
+              value={selectedMarket}
+              onValueChange={(value) => {
+                setSelectedMarket(value);
+                setCurrentPage(1); 
+              }}
             >
-              Buscar
-            </Button>
+              <SelectTrigger className="w-fit min-w-[180px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {uniqueMarkets.map((market) => (
+                  <SelectItem key={market} value={market}>
+                    {market}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
-      </section>
-
+      </div>
       {/* Destacados */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-          Productos
+          Ofertas destacadas
         </h2>
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Productos por página:</span>
           <Select
             value={itemsPerPage.toString()}
-            onValueChange={(value) => handleItemsPerPageChange(Number(value))}           
+            onValueChange={(value) =>  {
+              setItemsPerPage(Number(value));
+              setCurrentPage(1);  
+            }}         
           >
             <SelectTrigger className="w-[70px]">
               <SelectValue />
@@ -249,7 +270,6 @@ export default function Landing() {
               className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
             />
           </PaginationItem>
-
           {/* Pages: mostrar 1, actual-1, actual, actual+1, última con puntos si aplica */}
           {Array.from({ length: totalPages }, (_, i) => i + 1)
             .filter((page) =>

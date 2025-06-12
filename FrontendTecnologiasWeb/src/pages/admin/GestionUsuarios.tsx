@@ -50,6 +50,7 @@ export function GestionUsuarios() {
     return (
         <div className="min-h-screen pt-20 bg-[#f4f8ff] dark:bg-background px-4 py-10 transition-colors duration-300">
         <div className="flex flex-col items-start space-y-4 max-w-3xl mx-auto">
+            <div className="mb-2 w-full flex justify-center text-2xl font-semibold">Gestión de Usuarios</div>
             <Input
             placeholder="Buscar usuario por nombre..."
             value={query}
@@ -61,7 +62,7 @@ export function GestionUsuarios() {
                 <TableRow>
                 <TableHead>Usuario</TableHead>
                 <TableHead>Nombre</TableHead>
-                <TableHead>Rol</TableHead>
+                <TableHead className="text-center">Rol</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -74,13 +75,13 @@ export function GestionUsuarios() {
                     </Avatar>
                     </TableCell>
                     <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>
-                    <Button
-                        onClick={() => setSelectedUser(user)}
-                        className="rounded-xl bg-[#A0A0A0] w-32"
-                    >
-                        {user.role}
-                    </Button>
+                    <TableCell className="text-center">
+                        <Button
+                            onClick={() => setSelectedUser(user)}
+                            className="rounded-xl bg-[#A0A0A0] w-32"
+                        >
+                            {user.role}
+                        </Button>
                     </TableCell>
                 </TableRow>
                 ))}

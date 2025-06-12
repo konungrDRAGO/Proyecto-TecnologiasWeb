@@ -110,7 +110,7 @@ export function Navbar() {
             </PopoverContent>
           </Popover>
         )}
-        
+
         <button
           onClick={toggleTheme}
           className="p-2 rounded-md hover:bg-white/10 transition"
@@ -143,7 +143,6 @@ export function Navbar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => console.log("Perfil")}>Perfil</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => console.log("Favoritos")}>Favoritos</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => console.log("Configuración")}>Configuración</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>Cerrar sesión</DropdownMenuItem>
               </>

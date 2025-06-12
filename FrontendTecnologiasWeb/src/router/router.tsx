@@ -6,6 +6,9 @@ import Producto from "@/pages/Producto";
 import { RegisterForm } from "@/pages/Register";
 import Ofertas from "@/pages/Ofertas";
 import Supermercados from "@/pages/Supermercados";
+import AdminLayout from "./layoutAdmin";
+import { Panel } from "@/pages/admin/Panel";
+import { GestionUsuarios } from "@/pages/admin/GestionUsuarios";
 
 export const router = createBrowserRouter([
   {
@@ -54,6 +57,22 @@ export const router = createBrowserRouter([
       <MainLayout>
         <Supermercados />
       </MainLayout>
+    ),
+  },
+   {
+    path: "/admin",
+    element: (
+      <AdminLayout>
+        <Panel/>
+      </AdminLayout>
+    ),
+  },
+  {
+    path: "/usuarios",
+    element: (
+      <AdminLayout>
+        <GestionUsuarios/>
+      </AdminLayout>
     ),
   },
 ]);

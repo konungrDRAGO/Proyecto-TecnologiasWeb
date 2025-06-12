@@ -5,9 +5,10 @@ interface SuperCardProps {
   activeOffers: number;
   branches: number;
   lastUpdate: string;
+  headerColor?: string;
 }
 
-export const SuperCard = ({ store, activeOffers, branches, lastUpdate }: SuperCardProps) => {
+export const SuperCard = ({ store, activeOffers, branches, lastUpdate,headerColor }: SuperCardProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -20,11 +21,10 @@ export const SuperCard = ({ store, activeOffers, branches, lastUpdate }: SuperCa
 
   return (
     <div className="bg-white dark:bg-[#1f2533] rounded-xl shadow-md overflow-hidden w-64">
-      {/* Encabezado verde */}
-      <div className="bg-green-600 text-white text-center py-4 text-xl font-bold">
+      {/* Encabezado Color */}
+      <div className={`text-white text-center py-4 text-xl font-bold ${headerColor ?? "bg-gray-300"}`}>
         {store}
       </div>
-      
       {/* Contenido */}
       <div className="p-4 space-y-2 text-sm">
         <div className="flex justify-between text-gray-500 dark:text-gray-400">

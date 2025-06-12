@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 interface User {
   name: string;
   avatarUrl: string;
+  role: "admin" | "user"| "lecture"| "support";
 }
 
 interface UserContextType {
@@ -22,6 +23,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setUser({
       name: "Juan Saavedra",
       avatarUrl: "https://github.com/shadcn.png",
+      role: "admin",
     });
   };
 

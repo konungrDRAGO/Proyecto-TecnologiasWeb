@@ -1,78 +1,83 @@
-import Landing from "@/pages/Landing";
 import { createBrowserRouter } from "react-router-dom";
+import Landing from "@/pages/Landing";
 import { LoginForm } from "@/pages/Login";
-import MainLayout from "./layout";
-import Producto from "@/pages/Producto";
 import { RegisterForm } from "@/pages/Register";
+import Producto from "@/pages/Producto";
 import Ofertas from "@/pages/Ofertas";
 import Supermercados from "@/pages/Supermercados";
-import AdminLayout from "./layoutAdmin";
 import { Panel } from "@/pages/admin/Panel";
 import { GestionUsuarios } from "@/pages/admin/GestionUsuarios";
+import MainLayout from "./layout";
+import AdminLayout from "./layoutAdmin";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: (
-      <MainLayout>
-        <Landing />
-      </MainLayout>
-    ),
-  },
-  {
     path: "/login",
-    element: (
-      <MainLayout>
-        <LoginForm />
-      </MainLayout>
-    ),
+    element: <LoginForm />,
   },
   {
     path: "/register",
+    element: <RegisterForm />, 
+  },
+  {
+    path: "/",
     element: (
-      <MainLayout>
-        <RegisterForm/>
-      </MainLayout>
+      <ProtectedRoute rolesAllowed={["admin", "user"]}>
+        <MainLayout>
+          <Landing />
+        </MainLayout>
+      </ProtectedRoute>
     ),
   },
   {
     path: "/producto",
     element: (
-      <MainLayout>
-        <Producto />
-      </MainLayout>
+      <ProtectedRoute rolesAllowed={["admin", "user"]}>
+        <MainLayout>
+          <Producto />
+        </MainLayout>
+      </ProtectedRoute>
     ),
   },
   {
     path: "/ofertas",
     element: (
-      <MainLayout>
-        <Ofertas />
-      </MainLayout>
+      <ProtectedRoute rolesAllowed={["admin", "user"]}>
+        <MainLayout>
+          <Ofertas />
+        </MainLayout>
+      </ProtectedRoute>
     ),
   },
   {
     path: "/supermercados",
     element: (
-      <MainLayout>
-        <Supermercados />
-      </MainLayout>
+      <ProtectedRoute rolesAllowed={["admin", "user"]}>
+        <MainLayout>
+          <Supermercados />
+        </MainLayout>
+      </ProtectedRoute>
     ),
   },
-   {
+  {
     path: "/admin",
     element: (
-      <AdminLayout>
-        <Panel/>
-      </AdminLayout>
+      <ProtectedRoute rolesAllowed={["admin"]}>
+        <AdminLayout>
+          <Panel />
+        </AdminLayout>
+      </ProtectedRoute>
     ),
   },
   {
     path: "/usuarios",
     element: (
-      <AdminLayout>
-        <GestionUsuarios/>
-      </AdminLayout>
+      <ProtectedRoute rolesAllowed={["admin"]}>
+        <AdminLayout>
+          <GestionUsuarios />
+        </AdminLayout>
+      </ProtectedRoute>
     ),
   },
 ]);

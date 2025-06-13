@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useLocation } from "@/hooks/useLocation";
 import { MapPin, Tag } from "lucide-react";
 import { useEffect } from "react";
+import { useLocation as useRouterLocation } from "react-router-dom";
 
 import {
   Pagination,
@@ -138,10 +139,17 @@ export default function Ofertas() {
   const [query, setQuery] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+  const routerLocation = useRouterLocation();
 
   useEffect(() => {
     setCurrentPage(1);
   }, [query]);
+
+  useEffect(() => {
+    if (routerLocation.state?.store) {
+      setSelectedMarket(routerLocation.state.store);
+    }
+  }, [routerLocation.state]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(6);

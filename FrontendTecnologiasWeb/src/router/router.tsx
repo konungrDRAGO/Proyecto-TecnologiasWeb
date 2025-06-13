@@ -24,7 +24,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <ProtectedRoute rolesAllowed={["admin", "user"]}>
+      <ProtectedRoute rolesAllowed={["ADMINISTRADOR", "USUARIO", "LECTURA"]}>
         <MainLayout>
           <Landing />
         </MainLayout>
@@ -34,7 +34,7 @@ export const router = createBrowserRouter([
   {
     path: "/producto/:id",
     element: (
-      <ProtectedRoute rolesAllowed={["admin", "user"]}>
+      <ProtectedRoute rolesAllowed={["ADMINISTRADOR", "USUARIO", "LECTURA"]}>
         <MainLayout>
           <Producto />
         </MainLayout>
@@ -44,7 +44,7 @@ export const router = createBrowserRouter([
   {
     path: "/ofertas",
     element: (
-      <ProtectedRoute rolesAllowed={["admin", "user"]}>
+      <ProtectedRoute rolesAllowed={["ADMINISTRADOR", "USUARIO", "LECTURA"]}>
         <MainLayout>
           <Ofertas />
         </MainLayout>
@@ -54,7 +54,7 @@ export const router = createBrowserRouter([
   {
     path: "/supermercados",
     element: (
-      <ProtectedRoute rolesAllowed={["admin", "user"]}>
+      <ProtectedRoute rolesAllowed={["ADMINISTRADOR", "USUARIO", "LECTURA"]}>
         <MainLayout>
           <Supermercados />
         </MainLayout>
@@ -64,7 +64,7 @@ export const router = createBrowserRouter([
   {
     path: "/admin",
     element: (
-      <ProtectedRoute rolesAllowed={["admin","soporte"]}>
+      <ProtectedRoute rolesAllowed={["ADMINISTRADOR", "MODERADOR"]}>
         <AdminLayout>
           <Panel />
         </AdminLayout>
@@ -74,7 +74,7 @@ export const router = createBrowserRouter([
   {
     path: "/usuarios",
     element: (
-      <ProtectedRoute rolesAllowed={["admin"]}>
+      <ProtectedRoute rolesAllowed={["ADMINISTRADOR"]}>
         <AdminLayout>
           <GestionUsuarios />
         </AdminLayout>
@@ -84,7 +84,7 @@ export const router = createBrowserRouter([
   {
     path: "/ofertas-reportadas",
     element: (
-      <ProtectedRoute rolesAllowed={["admin","soporte"]}>
+      <ProtectedRoute rolesAllowed={["ADMINISTRADOR", "MODERADOR"]}>
         <AdminLayout>
           <OfertasReportadas />
         </AdminLayout>

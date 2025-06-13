@@ -1,12 +1,11 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "@/hooks/useLocation";
+import { getAllProducts } from "@/services/productsServices";
+import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ProductCard } from "@/components/ProductCard";
-import { useState } from "react";
-import { useLocation } from "@/hooks/useLocation";
 import { MapPin } from "lucide-react";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
 import {
   Pagination,
   PaginationContent,
@@ -16,142 +15,57 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select"
-
-const products = [
-  {
-    id: 1,
-    name: "Aceite Maravilla 1L",
-    price: 1200,
-    oldPrice: 3200,
-    store: "Jumbo",
-  },
-  {
-    id: 2,
-    name: "Chocapic",
-    price: 1000,
-    oldPrice: 1500,
-    store: "Unimarc",
-  },
-  {
-    id: 3,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 4,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 5,
-    name: "Aceite Maravilla 1L",
-    price: 1200,
-    oldPrice: 3200,
-    store: "Jumbo",
-  },
-  {
-    id: 6,
-    name: "Chocapic",
-    price: 1000,
-    oldPrice: 1500,
-    store: "Unimarc",
-  },
-  {
-    id: 7,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 8,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 9,
-    name: "Aceite Maravilla 1L",
-    price: 1200,
-    oldPrice: 3200,
-    store: "Jumbo",
-  },
-  {
-    id: 10,
-    name: "Chocapic",
-    price: 1000,
-    oldPrice: 1500,
-    store: "Unimarc",
-  },
-  {
-    id: 11,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 12,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 13,
-    name: "Aceite Maravilla 1L",
-    price: 1200,
-    oldPrice: 3200,
-    store: "Jumbo",
-  },
-  {
-    id: 14,
-    name: "Chocapic",
-    price: 1000,
-    oldPrice: 1500,
-    store: "Unimarc",
-  },
-  {
-    id: 15,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-
-];
+} from "@/components/ui/select";
 
 export default function Landing() {
   const [query, setQuery] = useState("");
+  const [products, setProducts] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Cargar productos desde la API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getAllProducts();
+        const apiProducts = response.productos || [];
+
+        const mappedProducts = apiProducts.map((p: any) => ({
+          id: p.id_producto,
+          name: `${p.nombre_producto}`,
+          price: p.mejor_precio?.precio ?? 0,
+          oldPrice: p.mejor_precio?.precio_original ?? 0,
+          store: p.mejor_precio?.supermercado?.nombre_supermercado ?? "Desconocido",
+          imageUrl: p.imagen_url,
+          discount: p.mejor_precio?.descuento ?? 0,
+        }));
+
+        setProducts(mappedProducts);
+      } catch (error) {
+        console.error("Error al cargar productos:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [query]);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
-
+  }, [query, itemsPerPage]);
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(query.toLowerCase())
   );
 
-  const handleItemsPerPageChange = (value:Number) => {
+  const handleItemsPerPageChange = (value: number) => {
     setItemsPerPage(Number(value));
     setCurrentPage(1);
   };
@@ -170,22 +84,20 @@ export default function Landing() {
           : "Detectando ubicación..."}
       </div>
 
-      {/* Navegación principal */}
+      {/* Navegación */}
       <div className="flex justify-center gap-4 mb-6">
-        <Button className="bg-[#292F42] hover:bg-[#1f2533] text-white dark:bg-[#1f2533] dark:hover:bg-[#10141d]" onClick={() => navigate('/')}>Inicio</Button>
-        <Button variant="secondary" onClick={() => navigate('/ofertas')}> Ofertas
-        </Button>
-        <Button variant="secondary" onClick={() => navigate('/supermercados')}>Supermercados</Button>
+        <Button className="bg-[#292F42]" onClick={() => navigate("/")}>Inicio</Button>
+        <Button variant="secondary" onClick={() => navigate("/ofertas")}>Ofertas</Button>
+        <Button variant="secondary" onClick={() => navigate("/supermercados")}>Supermercados</Button>
       </div>
 
-      {/* Hero principal */}
-      <section className="bg-[#292F42] dark:bg-[#1f2533] text-white rounded-xl p-6 text-center mb-10 transition-colors duration-300">
+      {/* Hero */}
+      <section className="bg-[#292F42] text-white rounded-xl p-6 text-center mb-10">
         <h1 className="text-2xl font-bold mb-4">
           Encuentra las mejores ofertas de supermercados en Chile
         </h1>
-        
-        <div className="py-4 rounded-xl flex justify-center">
-          <div className="flex items-center bg-[#f1f1f1] rounded-md overflow-hidden w-full sm:w-1/2 shadow-md h-9">
+        <div className="py-4 flex justify-center">
+          <div className="flex items-center bg-[#f1f1f1] rounded-md w-full sm:w-1/2 shadow-md h-9">
             <Input
               placeholder="Buscar productos"
               className="bg-transparent border-0 text-black placeholder:text-[#a0a0a0] px-4 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none h-full"
@@ -194,7 +106,6 @@ export default function Landing() {
             />
             <Button
               className="h-6 rounded-full bg-[#292F42] text-white px-4 text-xs font-semibold hover:bg-[#1f2533] transition mr-2"
-              onClick={() => console.log("Buscar:", query)}
             >
               Buscar
             </Button>
@@ -202,17 +113,12 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Destacados */}
+      {/* Listado de productos */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-          Productos
-        </h2>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Productos</h2>
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Productos por página:</span>
-          <Select
-            value={itemsPerPage.toString()}
-            onValueChange={(value) => handleItemsPerPageChange(Number(value))}           
-          >
+          <Select value={itemsPerPage.toString()} onValueChange={(value) => handleItemsPerPageChange(Number(value))}>
             <SelectTrigger className="w-[70px]">
               <SelectValue />
             </SelectTrigger>
@@ -225,6 +131,7 @@ export default function Landing() {
           </Select>
         </div>
       </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {paginatedProducts.length > 0 ? (
           paginatedProducts.map((product) => (
@@ -236,9 +143,10 @@ export default function Landing() {
           </div>
         )}
       </div>
-     <Pagination className="mt-8 mb-8">
+
+      {/* Paginación */}
+      <Pagination className="mt-8 mb-8">
         <PaginationContent>
-          {/* Previous */}
           <PaginationItem>
             <PaginationPrevious
               href="#"
@@ -250,7 +158,6 @@ export default function Landing() {
             />
           </PaginationItem>
 
-          {/* Pages: mostrar 1, actual-1, actual, actual+1, última con puntos si aplica */}
           {Array.from({ length: totalPages }, (_, i) => i + 1)
             .filter((page) =>
               page === 1 ||
@@ -260,7 +167,7 @@ export default function Landing() {
               page === totalPages
             )
             .reduce((acc: number[], page, i, arr) => {
-              if (i > 0 && page - arr[i - 1] > 1) acc.push(-1); // -1 = ellipsis
+              if (i > 0 && page - arr[i - 1] > 1) acc.push(-1);
               acc.push(page);
               return acc;
             }, [])
@@ -285,7 +192,7 @@ export default function Landing() {
                 </PaginationItem>
               )
             )}
-          {/* Next */}
+
           <PaginationItem>
             <PaginationNext
               href="#"

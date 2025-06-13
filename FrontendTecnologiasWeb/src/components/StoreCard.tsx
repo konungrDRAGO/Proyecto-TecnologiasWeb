@@ -11,7 +11,7 @@ import {
 
 type StoreCardProps = {
   store: string;
-  price: number;
+  price?: number;
   oldPrice?: number;
   isBest?: boolean;
   lat: number;
@@ -45,7 +45,7 @@ export function StoreCard({ store, price, oldPrice, isBest, lat, lng }: StoreCar
               oldPrice ? "text-green-600 dark:text-green-600" : "text-black dark:text-white"
             )}
           >
-            ${price.toLocaleString()}
+            ${price?.toLocaleString()}
           </p>
           {oldPrice && (
             <p className="text-gray-400 line-through text-sm">

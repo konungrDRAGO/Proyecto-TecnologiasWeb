@@ -6,6 +6,7 @@ import { useLocation } from "@/hooks/useLocation";
 import { MapPin, Tag } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation as useRouterLocation } from "react-router-dom";
+import { getAllProducts } from "@/services/productsServices";
 
 import {
   Pagination,
@@ -26,116 +27,8 @@ import {
 } from "@/components/ui/select"
 import { useNavigate } from "react-router-dom";
 
-const products = [
-  {
-    id: 1,
-    name: "Aceite Maravilla 1L",
-    price: 1200,
-    oldPrice: 3200,
-    store: "Jumbo",
-  },
-  {
-    id: 2,
-    name: "Chocapic",
-    price: 1000,
-    oldPrice: 1500,
-    store: "Unimarc",
-  },
-  {
-    id: 3,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 4,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 5,
-    name: "Aceite Maravilla 1L",
-    price: 1200,
-    oldPrice: 3200,
-    store: "Jumbo",
-  },
-  {
-    id: 6,
-    name: "Chocapic",
-    price: 1000,
-    oldPrice: 1500,
-    store: "Unimarc",
-  },
-  {
-    id: 7,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 8,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 9,
-    name: "Aceite Maravilla 1L",
-    price: 1200,
-    oldPrice: 3200,
-    store: "Jumbo",
-  },
-  {
-    id: 10,
-    name: "Chocapic",
-    price: 1000,
-    oldPrice: 1500,
-    store: "Unimarc",
-  },
-  {
-    id: 11,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 12,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-  {
-    id: 13,
-    name: "Aceite Maravilla 1L",
-    price: 1200,
-    oldPrice: 3200,
-    store: "Jumbo",
-  },
-  {
-    id: 14,
-    name: "Chocapic",
-    price: 1000,
-    oldPrice: 1500,
-    store: "Unimarc",
-  },
-  {
-    id: 15,
-    name: "Arroz 1KL",
-    price: 850,
-    oldPrice: 1200,
-    store: "Lider",
-  },
-
-];
-
 export default function Ofertas() {
+  const [products, setProducts] = useState<any[]>([]);
   const [query, setQuery] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
@@ -150,6 +43,31 @@ export default function Ofertas() {
       setSelectedMarket(routerLocation.state.store);
     }
   }, [routerLocation.state]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getAllProducts();
+        const apiProducts = response.productos || [];
+
+        const mappedProducts = apiProducts.map((p: any) => ({
+          id: p.id_producto,
+          name: `${p.nombre_producto}`,
+          price: p.mejor_precio?.precio ?? 0,
+          oldPrice: p.mejor_precio?.precio_original ?? 0,
+          store: p.mejor_precio?.supermercado?.nombre_supermercado ?? "Desconocido",
+          imageUrl: p.imagen_url,
+          discount: p.mejor_precio?.descuento ?? 0,
+        }));
+
+        setProducts(mappedProducts);
+      } catch (error) {
+        console.error("Error al cargar productos:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(6);

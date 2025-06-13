@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { SuperCard } from "@/components/SuperCard"; // Asegúrate de tener este componente adaptado
-import { useState, useEffect } from "react";
+import { SuperCard } from "@/components/SuperCard";
+import { useState, useEffect, useMemo } from "react"; // Added useMemo
 import { useLocation } from "@/hooks/useLocation";
 import { MapPin, Store } from "lucide-react";
 import {
@@ -13,7 +13,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-
 import {
   Select,
   SelectTrigger,
@@ -22,118 +21,81 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
+import { getSupermercados } from "@/services/productsServices";
 
-const supermarkets = [
-  {
-    id: 1,
-    name: "Jumbo",
-    activeOffers: 184,
-    branches: 89,
-    lastUpdate: "Hace 3 horas",
-    region: "Región Metropolitana",
-  },
-  {
-    id: 2,
-    name: "Lider",
-    activeOffers: 102,
-    branches: 75,
-    lastUpdate: "Hace 1 hora",
-    region: "Región de Valparaíso",
-  },
-  {
-    id: 3,
-    name: "Unimarc",
-    activeOffers: 90,
-    branches: 61,
-    lastUpdate: "Hace 2 horas",
-    region: "Región del Biobío",
-  },
-  {
-    id: 4,
-    name: "Tottus",
-    activeOffers: 120,
-    branches: 48,
-    lastUpdate: "Hace 30 minutos",
-    region: "Región Metropolitana",
-  },
-  {
-    id: 5,
-    name: "Santa Isabel",
-    activeOffers: 70,
-    branches: 40,
-    lastUpdate: "Hace 4 horas",
-    region: "Región de Coquimbo",
-  },
-  {
-    id: 6,
-    name: "Acuenta",
-    activeOffers: 45,
-    branches: 32,
-    lastUpdate: "Hace 5 horas",
-    region: "Región de Valparaíso",
-  },
-  {
-    id: 7,
-    name: "OK Market",
-    activeOffers: 60,
-    branches: 20,
-    lastUpdate: "Hace 1 hora",
-    region: "Región de Antofagasta",
-  },
-  {
-    id: 8,
-    name: "Alvi",
-    activeOffers: 38,
-    branches: 25,
-    lastUpdate: "Hace 2 horas",
-    region: "Región de La Araucanía",
-  },
-  {
-    id: 9,
-    name: "Mayorista 10",
-    activeOffers: 55,
-    branches: 18,
-    lastUpdate: "Hace 3 horas",
-    region: "Región del Maule",
-  },
-  {
-    id: 10,
-    name: "Erbi",
-    activeOffers: 22,
-    branches: 10,
-    lastUpdate: "Hace 6 horas",
-    region: "Región de Los Lagos",
-  },
-];
+interface Supermercado {
+  id_supermercado: number;
+  nombre_supermercado: string;
+  direccion: string | null;
+  url_sitio_web: string;
+  _count: {
+    ofertas: number;
+  };
+  region?: string; // region is optional based on your comment, but good to have if available
+}
 
 export default function Supermercados() {
   const [query, setQuery] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [supermarkets, setSupermarkets] = useState<Supermercado[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
   const [selectedRegion, setSelectedRegion] = useState("Todas las regiones");
 
-  const uniqueRegions = [
-    "Todas las regiones",
-    ...Array.from(new Set(supermarkets.map((s) => s.region))),
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getSupermercados();
+        // Assuming the API response might include a region.
+        // If not, you'd need a way to determine regions,
+        // e.g., mapping addresses to regions or another API call.
+        const data = res.data.map((s: Supermercado) => ({
+          ...s,
+          region: s.region || "Región Desconocida", // Use actual region if available, otherwise default
+        }));
+        setSupermarkets(data);
+      } catch (err) {
+        console.error("Error al obtener supermercados", err);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [query]);
+  }, [query, selectedRegion]); // Reset page when query or region changes
 
-  const filteredMarkets = supermarkets.filter((market) => {
-    const matchesQuery = market.name.toLowerCase().includes(query.toLowerCase());
-    const matchesRegion =
-      selectedRegion === "Todas las regiones" || market.region === selectedRegion;
-    return matchesQuery && matchesRegion;
-  });
+  // Use useMemo to re-calculate uniqueRegions only when 'supermarkets' changes
+  const uniqueRegions = useMemo(() => {
+    const regions = new Set<string>();
+    supermarkets.forEach((s) => {
+      if (s.region) {
+        regions.add(s.region);
+      }
+    });
+    return ["Todas las regiones", ...Array.from(regions)];
+  }, [supermarkets]);
+
+  const filteredMarkets = useMemo(() => {
+    return supermarkets.filter((market) => {
+      const matchesQuery = market.nombre_supermercado
+        .toLowerCase()
+        .includes(query.toLowerCase());
+      const matchesRegion =
+        selectedRegion === "Todas las regiones" ||
+        market.region === selectedRegion;
+      return matchesQuery && matchesRegion;
+    });
+  }, [supermarkets, query, selectedRegion]);
 
   const totalPages = Math.ceil(filteredMarkets.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedMarkets = filteredMarkets.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedMarkets = filteredMarkets.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   return (
     <main className="pt-20 px-4 lg:px-20 min-h-screen bg-white dark:bg-background transition-colors duration-300">
@@ -147,15 +109,25 @@ export default function Supermercados() {
 
       {/* Navegación */}
       <div className="flex justify-center gap-4 mb-6">
-        <Button variant="secondary" onClick={() => navigate('/')}>Inicio</Button>
-        <Button variant="secondary" onClick={() => navigate('/ofertas')}>Ofertas</Button>
-        <Button className="bg-[#292F42] hover:bg-[#1f2533] text-white dark:bg-[#1f2533] dark:hover:bg-[#10141d]" onClick={() => navigate('/supermercados')}>Supermercados</Button>
+        <Button variant="secondary" onClick={() => navigate("/")}>
+          Inicio
+        </Button>
+        <Button variant="secondary" onClick={() => navigate("/ofertas")}>
+          Ofertas
+        </Button>
+        <Button
+          className="bg-[#292F42] hover:bg-[#1f2533] text-white dark:bg-[#1f2533] dark:hover:bg-[#10141d]"
+          onClick={() => navigate("/supermercados")}
+        >
+          Supermercados
+        </Button>
       </div>
 
       {/* Hero */}
       <div className="bg-[#292F42] dark:bg-[#292F42] text-white rounded-xl p-6 text-center mb-10 transition-colors duration-300 w-full">
         <h1 className="text-2xl font-bold mb-4 w-full justify-center flex flex-row items-center">
-          <Store className="mr-2" style={{ transform: "scaleX(-1)" }} /> Supermercados Disponibles
+          <Store className="mr-2" style={{ transform: "scaleX(-1)" }} />{" "}
+          Supermercados Disponibles
         </h1>
         <div className="flex flex-row justify-center">
           <div className="py-4 rounded-xl w-1/2 flex start">
@@ -190,18 +162,21 @@ export default function Supermercados() {
           </div>
         </div>
       </div>
+
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
           Supermercados
         </h2>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Supermercados por página:</span>
+          <span className="text-sm text-muted-foreground">
+            Supermercados por página:
+          </span>
           <Select
             value={itemsPerPage.toString()}
-            onValueChange={(value) =>  {
+            onValueChange={(value) => {
               setItemsPerPage(Number(value));
-              setCurrentPage(1);  
-            }}         
+              setCurrentPage(1);
+            }}
           >
             <SelectTrigger className="w-[70px]">
               <SelectValue />
@@ -215,16 +190,17 @@ export default function Supermercados() {
           </Select>
         </div>
       </div>
+
       {/* Grid de supermercados */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
         {paginatedMarkets.length > 0 ? (
           paginatedMarkets.map((market) => (
             <SuperCard
-              key={market.id}
-              store={market.name}
-              activeOffers={market.activeOffers}
-              branches={market.branches}
-              lastUpdate={market.lastUpdate}
+              key={market.id_supermercado}
+              store={market.nombre_supermercado}
+              activeOffers={market._count.ofertas}
+              branches={0} // Replace with actual branches if available
+              lastUpdate="N/A" // Replace with actual last update if available
             />
           ))
         ) : (
@@ -233,6 +209,7 @@ export default function Supermercados() {
           </div>
         )}
       </div>
+
       {/* Paginación */}
       <Pagination className="mt-8 mb-8">
         <PaginationContent>
@@ -247,20 +224,23 @@ export default function Supermercados() {
             />
           </PaginationItem>
           {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter((page) =>
-              page === 1 ||
-              page === currentPage - 1 ||
-              page === currentPage ||
-              page === currentPage + 1 ||
-              page === totalPages
+            .filter(
+              (page) =>
+                page === 1 ||
+                page === currentPage - 1 ||
+                page === currentPage ||
+                page === currentPage + 1 ||
+                page === totalPages
             )
-            .reduce((acc: number[], page, i, arr) => {
-              if (i > 0 && page - arr[i - 1] > 1) acc.push(-1);
+            .reduce((acc: (number | string)[], page, i) => {
+              if (i > 0 && typeof acc[acc.length - 1] === 'number' && page - (acc[acc.length - 1] as number) > 1) {
+                acc.push("ellipsis"); // Use a string to indicate ellipsis
+              }
               acc.push(page);
               return acc;
             }, [])
             .map((page, index) =>
-              page === -1 ? (
+              page === "ellipsis" ? (
                 <PaginationItem key={`ellipsis-${index}`}>
                   <PaginationEllipsis />
                 </PaginationItem>
@@ -271,7 +251,7 @@ export default function Supermercados() {
                     isActive={page === currentPage}
                     onClick={(e) => {
                       e.preventDefault();
-                      setCurrentPage(page);
+                      setCurrentPage(page as number);
                     }}
                     className="min-w-8 text-center"
                   >
@@ -287,7 +267,9 @@ export default function Supermercados() {
                 e.preventDefault();
                 if (currentPage < totalPages) setCurrentPage(currentPage + 1);
               }}
-              className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+              className={
+                currentPage === totalPages ? "pointer-events-none opacity-50" : ""
+              }
             />
           </PaginationItem>
         </PaginationContent>

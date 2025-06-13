@@ -23,11 +23,19 @@ export function LoginForm() {
         formState: { errors },
     } = useForm<LoginFormInputs>();
 
-    const onSubmit = (data: LoginFormInputs) => {
-        console.log("Datos enviados:", data);
-        login();
-        navigate('/')
-        // Simular login o actualizar UserContext aquí
+    const onSubmit = async (data: LoginFormInputs) => {
+    try {
+        const role = await login(data.email, data.password);
+
+        if (role === "ADMINISTRADOR" || role === "MODERADOR") {
+        navigate("/admin");
+        } 
+        else {
+        navigate("/");
+        }
+    } catch (error) {
+        console.error("Error al iniciar sesión:", error);
+    }
     };
 
     return (

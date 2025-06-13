@@ -3,8 +3,8 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Eye, EyeOff } from "lucide-react";
-import { useUser } from "@/context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { registrarUsuario } from "@/services/usuarioServices";
 
 type RegisterFormInputs = {
     name:string;
@@ -18,8 +18,6 @@ export function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
 
-    const {login} = useUser();
-
     const {
         register,
         handleSubmit,
@@ -29,8 +27,8 @@ export function RegisterForm() {
 
     const onSubmit = (data: RegisterFormInputs) => {
         console.log("Datos enviados:", data);
-        login();
-        navigate('/')
+        registrarUsuario(data.email,data.name,"USUARIO",data.password);
+        navigate('/login')
         // Función para registrar usuario.
     };
 

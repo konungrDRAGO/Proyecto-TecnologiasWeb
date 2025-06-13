@@ -10,6 +10,7 @@ import { GestionUsuarios } from "@/pages/admin/GestionUsuarios";
 import MainLayout from "./layout";
 import AdminLayout from "./layoutAdmin";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { OfertasReportadas } from "@/pages/admin/OfertasReportadas";
 
 export const router = createBrowserRouter([
   {
@@ -63,7 +64,7 @@ export const router = createBrowserRouter([
   {
     path: "/admin",
     element: (
-      <ProtectedRoute rolesAllowed={["admin"]}>
+      <ProtectedRoute rolesAllowed={["admin","soporte"]}>
         <AdminLayout>
           <Panel />
         </AdminLayout>
@@ -76,6 +77,16 @@ export const router = createBrowserRouter([
       <ProtectedRoute rolesAllowed={["admin"]}>
         <AdminLayout>
           <GestionUsuarios />
+        </AdminLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/ofertas-reportadas",
+    element: (
+      <ProtectedRoute rolesAllowed={["admin","soporte"]}>
+        <AdminLayout>
+          <OfertasReportadas />
         </AdminLayout>
       </ProtectedRoute>
     ),

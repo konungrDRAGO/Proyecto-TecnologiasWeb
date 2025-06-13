@@ -4,16 +4,19 @@ import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   name: string;
+  id:any;
   price: number;
   oldPrice: number;
   store: string;
 }
 
-export const ProductCard = ({ name, price, oldPrice, store }: ProductCardProps) => {
+export const ProductCard = ({ name, price, oldPrice, store,id }: ProductCardProps) => {
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
 
   const handleClick = () => {
+      navigate(`/producto/${id}`);
+    /*
     navigate("/producto", {
     state: {
         name: "Chocapic",
@@ -25,6 +28,7 @@ export const ProductCard = ({ name, price, oldPrice, store }: ProductCardProps) 
         ],
     },
     });
+    */
   };
 
   return (

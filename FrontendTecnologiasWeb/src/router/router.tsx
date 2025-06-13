@@ -32,7 +32,7 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: "/producto",
+    path: "/producto/:id",
     element: (
       <ProtectedRoute rolesAllowed={["admin", "user"]}>
         <MainLayout>

@@ -15,7 +15,7 @@ type PriceInfo = {
 export default function Producto() {
   const [liked, setLiked] = useState(false);
   const { id } = useParams();
-
+  console.log(id)
   // Mock de datos del producto
   const name = "Chocapic";
   const image = "/chocapic.png";

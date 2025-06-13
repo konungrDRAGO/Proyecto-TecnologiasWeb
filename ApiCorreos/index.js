@@ -58,6 +58,16 @@ fastify.post('/api/refreshNotifications', async (request, reply) => {
   reply.send('Notificaciones actualizadas');
 });
 
+fastify.post('/api/send', async (request, reply) => {
+  const { to, mensaje, subject } = request.body;
+  try {
+    await sendEmails(to, mensaje, subject);
+    reply.send({ success: true, message: 'Correo enviado correctamente' });
+  } catch (error) {
+    reply.status(500).send({ success: false, message: 'Error al enviar correo' });
+  }
+});
+
 const port = process.env.PORT || 8080;
 
 fastify.listen({ port, host: '0.0.0.0' }, (err, address) => {

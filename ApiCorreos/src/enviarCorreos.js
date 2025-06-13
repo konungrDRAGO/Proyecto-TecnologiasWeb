@@ -12,7 +12,7 @@ export default async function sendEmails(to, mensaje, subject) {
         const response = await axios.post(
             'https://api.resend.com/emails',
             {
-                from: 'Acme <onboarding@resend.dev>',
+                from: 'EquipoNotificaciones <onboarding@resend.dev>',
                 to: recipients,
                 subject,
                 html: `<p>${mensaje}</p>`
